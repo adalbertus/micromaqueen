@@ -2,7 +2,7 @@
         maqueen.motorRun(maqueen.Motors.All, maqueen.Dir.CW, 0)
     }
 
-    function driveForward(speed : number = 200, time : number = 0){
+    function driveForward(speed : number = 255, time : number = 0){
         maqueen.motorRun(maqueen.Motors.All, maqueen.Dir.CW, speed)
         if(time > 0) {
             basic.pause(time)
@@ -10,7 +10,7 @@
         }
     }
 
-    function driveBackward(speed : number = 200, time : number = 0){
+    function driveBackward(speed : number = 255, time : number = 0){
         maqueen.motorRun(maqueen.Motors.All, maqueen.Dir.CCW, speed)
         if(time > 0) {
             basic.pause(time)
@@ -18,10 +18,13 @@
         }
     }
 
-    function turn(direction : Direction, speed : number = 200, time : number = 200) {
+    
+    function turn(direction : Direction, speed : number = 255, time : number = 200) {
         if(direction == Direction.Right) {
             maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CW, speed)
+            maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CW, 0)
         } else {
+            maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CW, 0)
             maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CW, speed)
         }
         if(time > 0) {
@@ -30,8 +33,30 @@
         }
     }
 
+    function turn10(direction : Direction) {
+        turn(direction, 150, 50)
+    }
+
     function turn45(direction : Direction) {
         turn(direction, 200, 200)
+    }
+
+    function turn90(direction : Direction) {
+        turn(direction, 255, 450)
+    }
+
+    function turn180(direction : Direction) {
+        if(direction == Direction.Right) {
+            maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CW, 255)
+            maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CCW, 255)
+        } else {
+            maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CCW, 255)
+            maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CW, 255)
+        }
+        
+        basic.pause(500)
+        driveStop()
+    
     }
 
 let roboMode = "STOP"
@@ -43,12 +68,12 @@ input.onButtonPressed(Button.A, function () {
   basic.pause(200)
   roboMode = "LINE"
   //driveForward(200, 500)
-  turn45(Direction.Right)
+  turn180(Direction.Right)
 })
 
 input.onButtonPressed(Button.B, function () {
     roboMode = "STOP"
-    turn45(Direction.Left)
+    turn180(Direction.Left)
 })
 
 function followTheLine () {
