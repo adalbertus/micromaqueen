@@ -99,6 +99,15 @@ let roboMode = "STOP"
 basic.showIcon(IconNames.Heart)
 basic.clearScreen()
 
+control.inBackground(function () {
+    if(roboMode == "LINE") {
+        if(isObstacle()) {
+            driveStop()
+            basic.pause(100)
+        }
+    }        
+})
+
 input.onButtonPressed(Button.A, function () {
   basic.pause(200)
   basic.showArrow(ArrowNames.North)
@@ -114,9 +123,7 @@ input.onButtonPressed(Button.B, function () {
 
 
 basic.forever(function () {
-
     if(roboMode == "LINE") {
         followTheLine()
-        bypassIfNeededObstacle()
     }
 })
