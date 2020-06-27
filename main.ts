@@ -69,6 +69,21 @@
         return maqueen.Ultrasonic(PingUnit.Centimeters) < distance && maqueen.Ultrasonic(PingUnit.Centimeters) != 0
     }
 
+    function bypassIfNeededObstacle() {
+        if(isObstacle()) {
+            let obstacleDirection = Direction.Right
+            if(Math.randomBoolean()) {
+                obstacleDirection = Direction.Left
+            }
+            driveBackward(50, 500)
+            turn45(obstacleDirection)
+            if(isObstacle()) {
+                driveBackward(50, 100)
+                turn10(obstacleDirection)
+            }
+        }
+    }
+
     function followTheLine () {    
         if (isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
             driveForward(50)
@@ -101,22 +116,7 @@ input.onButtonPressed(Button.B, function () {
 basic.forever(function () {
 
     if(roboMode == "LINE") {
-        //followTheLine()
-        if(isObstacle()) {
-            let obstacleDirection = Direction.Right
-            if(Math.randomBoolean()) {
-                obstacleDirection = Direction.Left
-            }
-            driveBackward(50, 500)
-            turn45(obstacleDirection)
-            if(isObstacle()) {
-                driveBackward(50, 100)
-                turn10(obstacleDirection)
-            } else {
-                driveForward(50, 100)
-            }
-        } else {
-            driveForward()
-        }
+        followTheLine()
+        bypassIfNeededObstacle()
     }
 })
