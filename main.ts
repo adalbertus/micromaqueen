@@ -60,9 +60,23 @@
 
     function isPatrolWhite(patrol : maqueen.Patrol) {
         if(patrol == maqueen.Patrol.PatrolRight) {
-            return maqueen.readPatrol(maqueen.Patrol.PatrolRight) == 0
+            return maqueen.readPatrol(maqueen.Patrol.PatrolRight) == 1
         } 
-        return maqueen.readPatrol(maqueen.Patrol.PatrolLeft) == 0
+        return maqueen.readPatrol(maqueen.Patrol.PatrolLeft) == 1
+    }
+
+    function isObstacle(distance : number = 5) {
+        return maqueen.Ultrasonic(PingUnit.Centimeters) < distance && maqueen.Ultrasonic(PingUnit.Centimeters) != 0
+    }
+
+    function followTheLine () {    
+        if (isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
+            driveForward(50)
+        } else if (isPatrolWhite(maqueen.Patrol.PatrolRight) && !isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
+            turn10(Direction.Left)
+        } else if (!isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
+            turn10(Direction.Right)
+        }
     }
 
 let roboMode = "STOP"
@@ -72,28 +86,37 @@ basic.clearScreen()
 
 input.onButtonPressed(Button.A, function () {
   basic.pause(200)
+  basic.showArrow(ArrowNames.North)
   roboMode = "LINE"  
 })
 
 input.onButtonPressed(Button.B, function () {
     roboMode = "STOP"
     driveStop()
+    basic.showIcon(IconNames.Asleep)
+    basic.clearScreen()
 })
 
-function followTheLine () {    
-    if (isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
-        driveForward()
-    } else if (isPatrolWhite(maqueen.Patrol.PatrolRight) && !isPatrolWhite(maqueen.Patrol.PatrolRight)) {
-        turn10(Direction.Right)
-    } else if (!isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolRight)) {
-        turn10(Direction.Right)
-    } else {
-        turn180(Direction.Right)
-    }
-}
 
 basic.forever(function () {
+
     if(roboMode == "LINE") {
-        followTheLine()
+        //followTheLine()
+        if(isObstacle()) {
+            let obstacleDirection = Direction.Right
+            if(Math.randomBoolean()) {
+                obstacleDirection = Direction.Left
+            }
+            driveBackward(50, 500)
+            turn45(obstacleDirection)
+            if(isObstacle()) {
+                driveBackward(50, 100)
+                turn10(obstacleDirection)
+            } else {
+                driveForward(50, 100)
+            }
+        } else {
+            driveForward()
+        }
     }
 })
