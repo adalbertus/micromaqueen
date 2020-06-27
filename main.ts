@@ -72,31 +72,28 @@ basic.clearScreen()
 
 input.onButtonPressed(Button.A, function () {
   basic.pause(200)
-  roboMode = "LINE"
-  //driveForward(200, 500)
-  turn180(Direction.Right)
+  roboMode = "LINE"  
 })
 
 input.onButtonPressed(Button.B, function () {
     roboMode = "STOP"
-    turn180(Direction.Left)
+    driveStop()
 })
 
 function followTheLine () {    
     if (isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolLeft)) {
         driveForward()
-    } else if (maqueen.readPatrol(maqueen.Patrol.PatrolLeft) == 1 && maqueen.readPatrol(maqueen.Patrol.PatrolRight) == 0) {
-        maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CW, 255)
-        maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CW, 50)
-    } else if (maqueen.readPatrol(maqueen.Patrol.PatrolLeft) == 0 && maqueen.readPatrol(maqueen.Patrol.PatrolRight) == 1) {
-        maqueen.motorRun(maqueen.Motors.M1, maqueen.Dir.CW, 50)
-        maqueen.motorRun(maqueen.Motors.M2, maqueen.Dir.CW, 255)
+    } else if (isPatrolWhite(maqueen.Patrol.PatrolRight) && !isPatrolWhite(maqueen.Patrol.PatrolRight)) {
+        turn10(Direction.Right)
+    } else if (!isPatrolWhite(maqueen.Patrol.PatrolRight) && isPatrolWhite(maqueen.Patrol.PatrolRight)) {
+        turn10(Direction.Right)
+    } else {
+        turn180(Direction.Right)
     }
 }
 
 basic.forever(function () {
     if(roboMode == "LINE") {
-        //followTheLine()
+        followTheLine()
     }
-
 })
